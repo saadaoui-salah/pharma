@@ -1,25 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Fuse from "fuse.js";
+
+type Pathologie = { id: number; name: string; domaine?: string };
 
 export default function SearchClient() {
   const [q, setQ] = useState("");
-  const [items, setItems] = useState<any[]>([]);
-  const [results, setResults] = useState<any[]>([]);
+  const [items, setItems] = useState<Pathologie[]>([]);
+  const [results, setResults] = useState<Pathologie[]>([]);
 
   useEffect(() => {
-    axios
-      .get((process.env.NEXT_PUBLIC_API_BASE || "/api/v1") + "/pathologies/")
-      .then((r) => setItems(r.data))
+    fetch((process.env.NEXT_PUBLIC_API_BASE || "/api/v1") + "/pathologies/")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: Pathologie[] | any) => setItems(Array.isArray(data) ? data : []))
       .catch(() => setItems([]));
   }, []);
 
   useEffect(() => {
     if (!q) return setResults([]);
-    const fuse = new Fuse(items, { keys: ["name", "domaine"] });
-    setResults(fuse.search(q).map((r) => r.item));
+  const fuse = new Fuse<Pathologie>(items, { keys: ["name", "domaine"] as const });
+  type F = Fuse.FuseResult<Pathologie>;
+  setResults(fuse.search(q).map((r: F) => r.item));
   }, [q, items]);
 
   return (

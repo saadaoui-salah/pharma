@@ -7,7 +7,7 @@ async function getDomaines() {
     const res = await fetch((process.env.NEXT_PUBLIC_API_BASE || "") + "/api/domaines/", { next: { revalidate: 60 } });
     if (!res.ok) return [];
     return res.json();
-  } catch (e) {
+  } catch {
     return [];
   }
 }

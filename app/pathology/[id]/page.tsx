@@ -10,7 +10,7 @@ export default async function Page({ params }: Props) {
   try {
     const res = await axios.get((process.env.NEXT_PUBLIC_API_BASE || "/api/v1") + `/fiches/${id}/`);
     data = res.data;
-  } catch (e) {
+  } catch {
     data = null;
   }
   if (!data) return <div className="p-6">Fiche not found</div>;

@@ -46,7 +46,10 @@ export default function HomeSearch({ initialDomaines }: { initialDomaines: Domai
         return r.json();
       })
       .then((data) => setPathologies(data))
-      .catch((err) => setError(err.message || "Erreur lors du chargement"))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err)
+        setError(msg || "Erreur lors du chargement")
+      })
       .finally(() => setLoadingPathos(false));
   }, [selectedDomaine]);
 
